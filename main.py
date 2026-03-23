@@ -16,7 +16,7 @@ def f(t, T):
     T_room = 292.15  # room temperature (K)
     k_mug = 1.5  # thermal conductivity of the mug material (W/m/K)
     r = 0.045 # radius of the mug (m)
-    height = 0.06
+    height = 0.09
     area = pi*r**2
     area_surf = (2*pi*r*height) + (2*area)
     rho = 1000
@@ -26,7 +26,7 @@ def f(t, T):
     d = 0.002  # thickness of the mug wall (m)
     em = 0.9  # emissivity of the mug surface
 
-    h_eff = 1 / ((d / k_mug) + (1 / h))  # effective heat transfer coefficient
+    h_eff = h*area + (k_mug*area_surf)/d
     Q_dot_rad = em*sigma*area_surf*((T**4) - (T_room**4))
     Q_dot_cond_conv = h_eff*area_surf*(T - T_room)
 
@@ -70,8 +70,8 @@ if __name__ == "__main__":
     # set parameters
     t0 = 0 # minutes
     # starting temperature (K)
-    #y0 = 364.15
-    y0 = 356.15
+    y0 = 364.15
+    #y0 = 356.15
     # how long to run the simulation (s)
     t_end = 7200
     # step size
@@ -89,10 +89,10 @@ if __name__ == "__main__":
     plt.plot(t_values, y_values,"-", label='Runge-Kutta (just water)', color='blue')
     #plt.plot(t_values_euler/60, y_values_euler,".", label='Euler', color='red')
 
-    plt.plot(t_end, 19, "x", label='19 (room temp)', color='green')
+    #plt.plot(t_end, 55, "x", label='55', color='green')
 
     plt.title("Modelled temperature of tea against time")
-    plt.xlabel("Time (minutes)")
+    plt.xlabel("Time (s)")
     plt.ylabel("Temperature (deg C)")
     plt.legend()
     plt.grid()
