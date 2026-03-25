@@ -23,6 +23,7 @@ def g(t, T, T_mug):
     # equation 2
     Q_dot = ((k_mug*area_s/d)*(T - T_mug) - h_m*area_s*(T_mug - T_room)
              - em_m*sigma*area_s*(T_mug**4 - T_room**4))
+
     dTmug_dt = Q_dot/(m_mug*c_m)
 
     return dTmug_dt
