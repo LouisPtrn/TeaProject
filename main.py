@@ -11,24 +11,6 @@ from math import pi
 # functions for the differential equations:
 # tea equation
 def f(t, T, T_mug):
-    # define parameters
-    sigma = const.sigma
-    T_room = 289.15  # room temperature (K)
-    k_mug = 1.5  # thermal conductivity of the mug material (W/m/K)
-    r = 0.05 # radius of the mug (m)
-    height = 0.09
-    area = pi*r**2 # exposed drinking area
-    area_s = (2*pi*r*height) # surface area of mug
-    rho_tea = 1000
-    rho_mug = 2400
-    m_tea = rho_tea * area * height
-    c_t = 4183  # specific heat cap of the tea
-    c_m = 1050 # specific heat cap of the mug
-    h_t = 10  # convective heat transfer coefficient of tea
-    h_m = 25 # convective heat transfer coefficient of mug
-    d = 0.005  # thickness of the mug wall (m)
-    em = 0.95  # emissivity of the tea
-
     # equation 1
     Q_dot = -(h_t*area*(T - T_room) + em*area*sigma*(T**4 - T_room**4) + (k_mug*area_s/d)*(T - T_mug))
 
@@ -38,26 +20,6 @@ def f(t, T, T_mug):
 
 # mug equation
 def g(t, T, T_mug):
-    # define parameters
-    sigma = const.sigma
-    T_room = 292.15  # room temperature (K)
-    k_mug = 1.5  # thermal conductivity of the mug material (W/m/K)
-    r = 0.05  # radius of the mug (m)
-    height = 0.09
-    area = pi*r**2  # exposed drinking area
-    area_s = (2*pi*r*height)  # surface area of mug
-    rho_tea = 1000
-    rho_mug = 2400
-    m_tea = rho_tea * area * height
-    c_t = 4183  # specific heat cap of the tea
-    c_m = 1050  # specific heat cap of the mug
-    h_t = 10  # convective heat transfer coefficient of tea
-    h_m = 25  # convective heat transfer coefficient of mug
-    d = 0.005  # thickness of the mug wall (m)
-    m_mug = rho_mug*2*pi*r*height*d + rho_mug*pi*r**2*d # mass from sides + mass from base
-    em = 0.95  # emissivity of the tea
-    em_m = 0.92 # emissivity of the mug
-
     # equation 2
     Q_dot = ((k_mug*area_s/d)*(T - T_mug) - h_m*area_s*(T_mug - T_room)
              - em_m*sigma*area_s*(T_mug**4 - T_room**4))
@@ -112,11 +74,32 @@ def experimental_data():
 
 
 if __name__ == "__main__":
-    # set parameters
-    t0 = 0
+    # DEFINE PARAMETERS
+    #########################################################################################
+    sigma = const.sigma
+    T_room = 289.15  # room temperature (K)
+    k_mug = 1.5  # thermal conductivity of the mug material (W/m/K)
+    r = 0.05  # radius of the mug (m)
+    height = 0.09
+    area = pi*r**2  # exposed drinking area
+    area_s = (2*pi*r*height) + area # surface area of mug
+    rho_tea = 1000
+    rho_mug = 2400
+    m_tea = rho_tea*area*height
+    c_t = 4183  # specific heat cap of the tea
+    c_m = 1050  # specific heat cap of the mug
+    h_t = 10  # convective heat transfer coefficient of tea
+    h_m = 25  # convective heat transfer coefficient of mug
+    d = 0.005  # thickness of the mug wall (m)
+    em = 0.95  # emissivity of the tea
+    em_m = 0.92  # emissivity of the mug
+    m_mug = rho_mug*2*pi*r*height*d + rho_mug*pi*r**2*d  # mass of mug
+    #########################################################################################
 
+    # set inital conditions
+    t0 = 0
     x0 = 364.15 # tea starting temperature (K)
-    #y0 = 356.15
+    #x0 = 356.15
     y0 = 289.15 # mug starting temp
     # how long to run the simulation (s)
     t_end = 1200

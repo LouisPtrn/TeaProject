@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7148a439-3f81-4922-86d2-3eec58419c2a" name="Changes" comment="Fixed an issue with h_eff not being correct value for the differential equation. Remade plots.">
+    <list default="true" id="7148a439-3f81-4922-86d2-3eec58419c2a" name="Changes" comment="Reworked the differential equation(s) and runge kutta to accommodate the two coupled equations. Graph shows expected shape">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -135,13 +135,22 @@
       <option name="project" value="LOCAL" />
       <updated>1774308070902</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Reworked the differential equation(s) and runge kutta to accommodate the two coupled equations. Graph shows expected shape">
+      <option name="closed" value="true" />
+      <created>1774478689806</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1774478689806</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Tea project" />
     <MESSAGE value="Fixed an issue with h_eff not being correct value for the differential equation. Remade plots." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed an issue with h_eff not being correct value for the differential equation. Remade plots." />
+    <MESSAGE value="Reworked the differential equation(s) and runge kutta to accommodate the two coupled equations. Graph shows expected shape" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reworked the differential equation(s) and runge kutta to accommodate the two coupled equations. Graph shows expected shape" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
