@@ -90,8 +90,11 @@ def euler(t0, y0, t_end, h):
 if __name__ == "__main__":
     T_val_list = []
     T_mug_val_list = []
+    it_num = 1
 
-    for i in range(50):
+    for i in range(it_num):
+        assigned_T_eq = False
+
         # DEFINE PARAMETERS
         #########################################################################################
         sigma = const.sigma
@@ -100,7 +103,7 @@ if __name__ == "__main__":
         r = 0.04  # radius of the mug (m)
         height = 0.088
         area = pi*r**2  # exposed drinking area
-        area_s = (2*pi*r*height) # surface area of mug
+        area_s = (2*pi*r*height) + area # surface area of mug
         rho_tea = 1000
         rho_mug = 2400
         vol_tea = 250*10**-6 # volume of tea (m^3)
@@ -123,13 +126,10 @@ if __name__ == "__main__":
         tau_stir = 6
 
         t_equilibrium = 4*tau_stir
-        c_mixed = 4158  # mixed specific heat cap of tea and milk
+        c_mixed = 4154.7  # mixed specific heat cap of tea and milk
         m_mixed = m_tea + m_milk
 
         # h_i = 750
-
-        assigned_T_eq = False
-        #idea
 
         #########################################################################################
 
@@ -139,21 +139,15 @@ if __name__ == "__main__":
         #x0 = 356.15
         y0 = 289.15 # mug starting temp
         # how long to run the simulation (s)
-        t_end = 1200
+        t_end = 1400
         # step size
         h = 0.1
 
         ideal_temp = 57.8
 
-        t_milk = 400+i*20  # time when milk is added
+        t_milk = i+240  # time when milk is added
 
         # Runge-Kutta method
-
-
-        t_values, T_values, T_mug_values = runge_kutta(t0, x0, y0, t_end, h)
-
-        T_values -= 273.15  # convert to Celsius for plotting
-        T_mug_values -= 273.15
         t_values, T_values, T_mug_values = runge_kutta(t0, x0, y0, t_end, h)
 
         T_values -= 273.15  # convert to Celsius for plotting
@@ -163,7 +157,7 @@ if __name__ == "__main__":
         T_mug_val_list.append(T_mug_values)
 
         # Load experimental data
-        # t_exp, T_exp_values = np.loadtxt("experiment_3.txt", unpack=True, delimiter=",")
+        t_exp, T_exp_values = np.loadtxt("experiment_3.txt", unpack=True, delimiter=",")
 
         #get time when ideal temp is reached
         ideal_time_model = None
@@ -172,22 +166,21 @@ if __name__ == "__main__":
                 ideal_time_model = t
                 break
 
-        # ideal_time_exp = None
-        # for t, T in zip(t_exp, T_exp_values):
-        #     if T <= ideal_temp:
-        #         ideal_time_exp = t
-        #         break
+        ideal_time_exp = None
+        for t, T in zip(t_exp, T_exp_values):
+            if T <= ideal_temp:
+                ideal_time_exp = t
+                break
 
-        #print(f"Ideal temperature reached at {ideal_time_model:.2f} seconds in the model.")
-        #print(f"Ideal temperature reached at {ideal_time_exp:.2f} seconds in the experiment.")
+        print(f"Ideal temperature reached at {ideal_time_model:.2f} seconds in the model, t_milk = {t_milk}.")
+        print(f"Ideal temperature reached at {ideal_time_exp:.2f} seconds in the experiment, t_milk = 240")
 
     # Plotting the results
     plt.figure(figsize=(10, 6))
     for T in T_val_list:
         plt.plot(t_values, T, "-", label='Model', color='blue')
-    #plt.plot(t_exp, T_exp_values, "-", label='Experiment', color='red')
-    #plt.plot(t_values, T2_vals, "-", label='Runge-Kutta mug', color='red')
-    #plt.plot(t_values_euler/60, y_values_euler,".", label='Euler', color='red')
+    plt.plot(t_exp, T_exp_values, "-", label='Experiment', color='red')
+    # plt.plot(t_values, T_mug_val_list[0], "-", label='Runge-Kutta mug', color='black')
 
     # plot y=57.8
     plt.axhline(y=ideal_temp, color='green', linestyle='--', label='Ideal temperature')
@@ -196,9 +189,9 @@ if __name__ == "__main__":
     plt.plot([t_milk, t_milk], [min(T_values), max(T_values)], color='purple', linestyle='--', label='milk added')
     plt.plot([t_milk + t_equilibrium, t_milk + t_equilibrium], [min(T_values), max(T_values)], color='purple', linestyle='--', label='equilibrium reached')
 
-    plt.title("Modelled temperature of tea against time")
+    plt.title("Temperature of tea against time")
     plt.xlabel("Time (s)")
-    plt.ylabel("Temperature (deg C)")
+    plt.ylabel("Liquid Temperature (°C)")
     plt.legend()
     plt.grid()
     plt.show()

@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7148a439-3f81-4922-86d2-3eec58419c2a" name="Changes" comment="finished the adding milk part">
+    <list default="true" id="7148a439-3f81-4922-86d2-3eec58419c2a" name="Changes" comment="can iterate over different milk times">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -175,7 +175,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774534542997</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="can iterate over different milk times">
+      <option name="closed" value="true" />
+      <created>1774536733765</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1774536733765</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -195,7 +203,8 @@
     <MESSAGE value="Reworked the differential equation(s) and runge kutta to accommodate the two coupled equations. Graph shows expected shape" />
     <MESSAGE value="Reworked the differential equation(s) and runge kutta to accommodate the two coupled equations. Graph shows expected shape." />
     <MESSAGE value="finished the adding milk part" />
-    <option name="LAST_COMMIT_MESSAGE" value="finished the adding milk part" />
+    <MESSAGE value="can iterate over different milk times" />
+    <option name="LAST_COMMIT_MESSAGE" value="can iterate over different milk times" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
