@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
         ideal_temp = 57.8
 
-        t_milk = 200*i+1 # time when milk is added
+        t_milk = 200*i+95 # time when milk is added
 
         # Runge-Kutta method
         t_values, T_values, T_mug_values = runge_kutta(t0, x0, y0, t_end, h)
