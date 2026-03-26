@@ -12,9 +12,26 @@ from math import pi
 # tea equation
 def f(t, T, T_mug):
     # equation 1
-    Q_dot = -(h_t*area*(T - T_room) + em*area*sigma*(T**4 - T_room**4) + (k_mug*area_s/d)*(T - T_mug))
+    global assigned_T_eq
+    global T_eq
 
-    dT_dt = Q_dot/(m_tea*c_t)
+    if t < t_milk:
+        Q_dot = -(h_t*area*(T - T_room) + em*area*sigma*(T**4 - T_room**4) + (k_mug*area_s/d)*(T - T_mug))
+        dT_dt = Q_dot/(m_tea*c_t)
+    elif t > t_milk + t_equilibrium:
+        Q_dot = -(h_t*area*(T - T_room) + em*area*sigma*(T**4 - T_room**4) + (k_mug*area_s/d)*(T - T_mug))
+        dT_dt = Q_dot/(m_mixed*c_mixed)
+    else:
+        if not assigned_T_eq:
+
+            # T_eq = (m_tea * c_t * T + m_milk * c_milk * T_milk + m_mug) / (m_tea * c_t + m_milk * c_milk)
+            T_eq = (m_tea * c_t * T + m_milk * c_milk * T_milk + m_mug * c_m * T_mug) / (m_tea * c_t + m_milk * c_milk + m_mug * c_m)
+            # T_eq = 344.15
+            assigned_T_eq = True
+
+        Q_dot = -(h_t*area*(T - T_room) + em*area*sigma*(T**4 - T_room**4) + (k_mug*area_s/d)*(T - T_mug))
+        # get temperature of tea and milk in equilibrium
+        dT_dt = Q_dot/(m_tea*c_t)-(T-T_eq)/tau_stir
 
     return dT_dt
 
@@ -56,7 +73,7 @@ def runge_kutta(t0, x0, y0, t_end, h):
         x_values[i] = x + (h/6) * (k1x + 2 * k2x + 2 * k3x + k4x)
         y_values[i] = y + (h/6) * (k1y + 2 * k2y + 2 * k3y + k4y)
 
-    return t_values, x_values
+    return t_values, x_values, y_values
 
 
 def euler(t0, y0, t_end, h):
@@ -70,57 +87,97 @@ def euler(t0, y0, t_end, h):
     return t_values, y_values
 
 
-def experimental_data():
-    return
-
-
 if __name__ == "__main__":
     # DEFINE PARAMETERS
     #########################################################################################
     sigma = const.sigma
-    T_room = 289.15  # room temperature (K)
+    T_room = 294.55  # room temperature (K)
     k_mug = 1.5  # thermal conductivity of the mug material (W/m/K)
-    r = 0.05  # radius of the mug (m)
-    height = 0.09
+    r = 0.04  # radius of the mug (m)
+    height = 0.088
     area = pi*r**2  # exposed drinking area
-    area_s = (2*pi*r*height) + area # surface area of mug
+    area_s = (2*pi*r*height) # surface area of mug
     rho_tea = 1000
     rho_mug = 2400
-    m_tea = rho_tea*area*height
+    vol_tea = 250*10**-6 # volume of tea (m^3)
+    m_tea = rho_tea*vol_tea
     c_t = 4183  # specific heat cap of the tea
     c_m = 1050  # specific heat cap of the mug
     h_t = 10  # convective heat transfer coefficient of tea
-    h_m = 25  # convective heat transfer coefficient of mug
-    d = 0.005  # thickness of the mug wall (m)
+    h_m = 10.2  # convective heat transfer coefficient of mug
+    d = 0.002  # thickness of the mug wall (m)
     em = 0.95  # emissivity of the tea
     em_m = 0.92  # emissivity of the mug
     m_mug = rho_mug*2*pi*r*height*d + rho_mug*pi*r**2*d  # mass of mug
+    # m_mug = 0.29
+    t_milk = 240 # time when milk is added
+    c_milk = 3900 # specific heat cap of the milk
+
+    vol_milk = 25*10**-6
+    m_milk = vol_milk*1000
+    T_milk = 282.25
+    tau_stir = 6
+
+    t_equilibrium = 4*tau_stir
+    c_mixed = 4158  # mixed specific heat cap of tea and milk
+    m_mixed = m_tea + m_milk
+
+    assigned_T_eq = False
+    #idea
+
     #########################################################################################
 
     # set inital conditions
     t0 = 0
-    x0 = 364.15 # tea starting temperature (K)
+    x0 = 363.75 # tea starting temperature (K)
     #x0 = 356.15
     y0 = 289.15 # mug starting temp
     # how long to run the simulation (s)
-    t_end = 1200
+    t_end = 1400
     # step size
-    h = 1
+    h = 0.1
+
+    ideal_temp = 57.8
 
     # Runge-Kutta method
-    t_values, T_values = runge_kutta(t0, x0, y0, t_end, h)
+    t_values, T_values, T_mug_values = runge_kutta(t0, x0, y0, t_end, h)
 
     T_values -= 273.15  # convert to Celsius for plotting
-    # Euler method
-    #t_values_euler, y_values_euler = euler(t0, y0, t_end, h)
-    #y_values_euler -= 273.15
+    T_mug_values -= 273.15
+
+    # Load experimental data
+    t_exp, T_exp_values = np.loadtxt("experiment_3.txt", unpack=True, delimiter=",")
+
+    # get time when ideal temp is reached
+    ideal_time_model = None
+    for t, T in zip(t_values, T_values):
+        if T <= ideal_temp:
+            ideal_time_model = t
+            break
+
+    ideal_time_exp = None
+    for t, T in zip(t_exp, T_exp_values):
+        if T <= ideal_temp:
+            ideal_time_exp = t
+            break
+
+    print(f"Ideal temperature reached at {ideal_time_model:.2f} seconds in the model.")
+    print(f"Ideal temperature reached at {ideal_time_exp:.2f} seconds in the experiment.")
+
 
     # Plotting the results
     plt.figure(figsize=(10, 6))
-    plt.plot(t_values, T_values,"-", label='Runge-Kutta (just water)', color='blue')
+    plt.plot(t_values, T_values,"-", label='Runge-Kutta liquid', color='blue')
+    plt.plot(t_exp, T_exp_values, "-", label='Experiment', color='red')
+    #plt.plot(t_values, T2_vals, "-", label='Runge-Kutta mug', color='red')
     #plt.plot(t_values_euler/60, y_values_euler,".", label='Euler', color='red')
 
-    plt.plot(t_end, 55, "x", label='55', color='green')
+    # plot y=57.8
+    plt.axhline(y=ideal_temp, color='green', linestyle='--', label='Ideal temperature')
+
+    # plot x=t_milk, x=t_milk+t_equilibrium
+    plt.plot([t_milk, t_milk], [min(T_values), max(T_values)], color='purple', linestyle='--', label='t=t_milk')
+    plt.plot([t_milk + t_equilibrium, t_milk + t_equilibrium], [min(T_values), max(T_values)], color='purple', linestyle='--', label='t=t_milk+t_equilibrium')
 
     plt.title("Modelled temperature of tea against time")
     plt.xlabel("Time (s)")
