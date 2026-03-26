@@ -90,7 +90,8 @@ def euler(t0, y0, t_end, h):
 if __name__ == "__main__":
     T_val_list = []
     T_mug_val_list = []
-    it_num = 1
+    milk_times = []
+    it_num = 5
 
     for i in range(it_num):
         assigned_T_eq = False
@@ -145,7 +146,7 @@ if __name__ == "__main__":
 
         ideal_temp = 57.8
 
-        t_milk = i+240  # time when milk is added
+        t_milk = 200*i+1 # time when milk is added
 
         # Runge-Kutta method
         t_values, T_values, T_mug_values = runge_kutta(t0, x0, y0, t_end, h)
@@ -157,7 +158,7 @@ if __name__ == "__main__":
         T_mug_val_list.append(T_mug_values)
 
         # Load experimental data
-        t_exp, T_exp_values = np.loadtxt("experiment_3.txt", unpack=True, delimiter=",")
+        # t_exp, T_exp_values = np.loadtxt("experiment_3.txt", unpack=True, delimiter=",")
 
         #get time when ideal temp is reached
         ideal_time_model = None
@@ -166,30 +167,37 @@ if __name__ == "__main__":
                 ideal_time_model = t
                 break
 
-        ideal_time_exp = None
-        for t, T in zip(t_exp, T_exp_values):
-            if T <= ideal_temp:
-                ideal_time_exp = t
-                break
+        # ideal_time_exp = None
+        # for t, T in zip(t_exp, T_exp_values):
+        #     if T <= ideal_temp:
+        #         ideal_time_exp = t
+        #         break
 
         print(f"Ideal temperature reached at {ideal_time_model:.2f} seconds in the model, t_milk = {t_milk}.")
-        print(f"Ideal temperature reached at {ideal_time_exp:.2f} seconds in the experiment, t_milk = 240")
+        milk_times.append(t_milk)
+        # print(f"Ideal temperature reached at {ideal_time_exp:.2f} seconds in the experiment, t_milk = 240")
 
     # Plotting the results
     plt.figure(figsize=(10, 6))
+    n = 0
     for T in T_val_list:
-        plt.plot(t_values, T, "-", label='Model', color='blue')
-    plt.plot(t_exp, T_exp_values, "-", label='Experiment', color='red')
+        colors = ["red", "orange", "green", "blue", "purple"]
+        if n == 4:
+            plt.plot(t_values, T, "-", label=str(milk_times[n]) + " s (optimal time)",color=colors[n])
+        else:
+            plt.plot(t_values, T, "-", label=str(milk_times[n]) + " s", color=colors[n])
+        n += 1
+    # plt.plot(t_exp, T_exp_values, "-", label='Experiment', color='red')
     # plt.plot(t_values, T_mug_val_list[0], "-", label='Runge-Kutta mug', color='black')
 
     # plot y=57.8
     plt.axhline(y=ideal_temp, color='green', linestyle='--', label='Ideal temperature')
 
     # plot x=t_milk, x=t_milk+t_equilibrium
-    plt.plot([t_milk, t_milk], [min(T_values), max(T_values)], color='purple', linestyle='--', label='milk added')
-    plt.plot([t_milk + t_equilibrium, t_milk + t_equilibrium], [min(T_values), max(T_values)], color='purple', linestyle='--', label='equilibrium reached')
+    # plt.plot([t_milk, t_milk], [min(T_values), max(T_values)], color='purple', linestyle='--', label='milk added')
+    # plt.plot([t_milk + t_equilibrium, t_milk + t_equilibrium], [min(T_values), max(T_values)], color='purple', linestyle='--', label='equilibrium reached')
 
-    plt.title("Temperature of tea against time")
+    plt.title("Temperature of tea against time for different milk addition times")
     plt.xlabel("Time (s)")
     plt.ylabel("Liquid Temperature (°C)")
     plt.legend()
